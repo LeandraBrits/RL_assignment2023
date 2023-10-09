@@ -6,4 +6,3 @@ DQN and REINFORCE for solving Minihack_Quest_Hard
 - Leandra Brits: 1608780
 - Zidan Cassim: 1914752
 - Rebekah van Wyk: 2344005
-- Richie v Sims: 23034453
