@@ -3,3 +3,4 @@ DQN and REINFORCE for solving Minihack_Quest_Hard
 
 GROUP MEMBERS
 Leandra Brits, 1608780
+Zidan Cassim, 1914752
