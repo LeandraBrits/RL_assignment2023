@@ -1,0 +1,1 @@
+The section of the repo where we put a whole lot of seriously awful code so that we can keep the less awful code safe far, far away.
