@@ -5,8 +5,7 @@ import torch.nn.functional as F
 
 class DQN(nn.Module):
     """
-    A basic implementation of a Deep Q-Network. The architecture is the same as that described in the
-    Nature DQN paper.
+    A basic implementation of a Deep Q-Network.
     """
 
     def __init__(self, observation_space: spaces.Box, action_space: spaces.Discrete):
@@ -64,8 +63,6 @@ class DQN(nn.Module):
         self.fc1 = nn.Linear(self._to_linear,  out_features=512) # flattening
         self.fc2 = nn.Linear(in_features=512, out_features=action_space.n) # 512 in, number of actions out (because the actions are our classes)
 
-        #raise NotImplementedError
-
     def convs(self, x):
 
         x = F.Relu(self.conv1(x))
@@ -82,5 +79,3 @@ class DQN(nn.Module):
         x = F.relu(self.fc1(x)) 
         x = self.fc2(x) # bc this is our output layer,  no activation is required
         return x 
-
-        raise NotImplementedError
