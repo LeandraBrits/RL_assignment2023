@@ -3,8 +3,8 @@ import numpy as np
 import torch
 import random
 
-from dqn.model import DQN
-from dqn.replay_buffer import ReplayBuffer
+from dqn_helper_files.model import DQN
+from dqn_helper_files.replay_buffer import ReplayBuffer
 
 device = torch.device("cuda:0")
 
