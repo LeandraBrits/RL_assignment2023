@@ -1,5 +1,5 @@
 """
-Useful wrappers taken from OpenAI (https://github.com/openai/baselines)
+These wrappers taken from OpenAI (https://github.com/openai/baselines), and were shown to us during the DQN Lab.
 """
 
 import numpy as np
@@ -20,7 +20,7 @@ class NoopResetEnv(gym.Wrapper):
         self.noop_max = noop_max
         self.override_num_noops = None
         self.noop_action = 0
-        assert env.unwrapped.get_action_meanings()[0] == 'NOOP'
+        assert env.unwrapped.get_action_meanings()[0] == "NOOP"
 
     def reset(self, **kwargs):
         """ Do no-op action for a number of steps in [1, noop_max]."""
@@ -28,7 +28,9 @@ class NoopResetEnv(gym.Wrapper):
         if self.override_num_noops is not None:
             noops = self.override_num_noops
         else:
-            noops = self.unwrapped.np_random.randint(1, self.noop_max + 1)  # pylint: disable=E1101
+            noops = self.unwrapped.np_random.randint(
+                1, self.noop_max + 1
+            )  # pylint: disable=E1101
         assert noops > 0
         obs = None
         for _ in range(noops):
@@ -45,7 +47,7 @@ class FireResetEnv(gym.Wrapper):
     def __init__(self, env):
         """Take action on reset for environments that are fixed until firing."""
         gym.Wrapper.__init__(self, env)
-        assert env.unwrapped.get_action_meanings()[1] == 'FIRE'
+        assert env.unwrapped.get_action_meanings()[1] == "FIRE"
         assert len(env.unwrapped.get_action_meanings()) >= 3
 
     def reset(self, **kwargs):
@@ -116,8 +118,10 @@ class MaxAndSkipEnv(gym.Wrapper):
         done = None
         for i in range(self._skip):
             obs, reward, done, info = self.env.step(action)
-            if i == self._skip - 2: self._obs_buffer[0] = obs
-            if i == self._skip - 1: self._obs_buffer[1] = obs
+            if i == self._skip - 2:
+                self._obs_buffer[0] = obs
+            if i == self._skip - 1:
+                self._obs_buffer[1] = obs
             total_reward += reward
             if done:
                 break
@@ -148,12 +152,17 @@ class WarpFrame(gym.ObservationWrapper):
         gym.ObservationWrapper.__init__(self, env)
         self.width = 84
         self.height = 84
-        self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(self.height, self.width, 1), dtype=np.uint8)
+        self.observation_space = spaces.Box(
+            low=0, high=255, shape=(self.height, self.width, 1), dtype=np.uint8
+        )
 
     def observation(self, frame):
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-        frame = cv2.resize(frame, (self.width, self.height), interpolation=cv2.INTER_AREA)
+        #print(frame)
+        #print(frame.shape)
+        frame = cv2.cvtColor(frame['pixel_crop'], cv2.COLOR_RGB2GRAY)
+        frame = cv2.resize(
+            frame, (self.width, self.height), interpolation=cv2.INTER_AREA
+        )
         return frame[:, :, None]
 
 
@@ -167,7 +176,9 @@ class FrameStack(gym.Wrapper):
         self.k = k
         self.frames = deque([], maxlen=k)
         shp = env.observation_space.shape
-        self.observation_space = spaces.Box(low=0, high=255, shape=(shp[0] * k, shp[1], shp[2]), dtype=np.uint8)
+        self.observation_space = spaces.Box(
+            low=0, high=255, shape=(shp[0] * k, shp[1], shp[2]), dtype=np.uint8
+        )
 
     def reset(self):
         ob = self.env.reset()
@@ -221,7 +232,11 @@ class PyTorchFrame(gym.ObservationWrapper):
     def __init__(self, env):
         super(PyTorchFrame, self).__init__(env)
         shape = self.observation_space.shape
-        self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(shape[-1], shape[0], shape[1]), dtype=np.uint8)
+        self.observation_space = gym.spaces.Box(
+            low=0.0, high=1.0, shape=(shape[-1], shape[0], shape[1]), dtype=np.uint8
+        )
 
     def observation(self, observation):
         return np.rollaxis(observation, 2)
+
+import numpy as np

@@ -10,6 +10,7 @@ import gym
 from gym.wrappers.monitoring import video_recorder as VideoRecorder
 import time
 from nle import nethack
+import minihack
 
 if __name__ == '__main__':
 
@@ -50,7 +51,6 @@ if __name__ == '__main__':
 
     hyper_params = {
         "seed": 42,  # which seed to use
-        "env": "PongNoFrameskip-v4",  # name of the game
         "replay-buffer-size": int(5e3),  # replay buffer size
         "learning-rate": 1e-4,  # learning rate for Adam optimizer
         "discount-factor": 0.99,  # discount factor
@@ -66,26 +66,20 @@ if __name__ == '__main__':
         "print-freq": 10,
     }
 
-    torch.manual_seed(hyper_params.seed)
-    torch.cuda.manual_seed_all(hyper_params.seed)
-    np.random.seed(hyper_params.seed)
-    random.seed(hyper_params.seed)
-
-    assert "NoFrameskip" in hyper_params["env"], "Require environment with no frameskip"
-    env = gym.make(hyper_params["env"])
+    # torch.manual_seed(hyper_params["seed"])
+    # torch.cuda.manual_seed_all(hyper_params["seed"])
+    # np.random.seed(hyper_params["seed"])
+    # random.seed(hyper_params["seed"])
+    
+    # need these wrappers or you'll get "AssertionError: observation_space must be of type Box"
+    # look into why we need that assertion?
+    
     env.seed(hyper_params["seed"])
-
-
-    # are the wrappers we used last time needed and do they work here or just for atari?
-    # env = NoopResetEnv(env, noop_max=30)
-    # env = MaxAndSkipEnv(env, skip=4)
-    # env = EpisodicLifeEnv(env)
-    # env = FireResetEnv(env)
-    # env = WarpFrame(env)
-    # env = PyTorchFrame(env)
-    # env = ClipRewardEnv(env)
-    # env = FrameStack(env, 4)
-
+  #  env = RenderRGB(env, "pixel_crop")
+    env = WarpFrame(env)
+    env = PyTorchFrame(env)
+    env = FrameStack(env, 4)
+    
     replay_buffer = ReplayBuffer(hyper_params["replay-buffer-size"])
 
     agent = DQNAgent(

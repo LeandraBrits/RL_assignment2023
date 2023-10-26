@@ -2,6 +2,10 @@ from gym import spaces
 import numpy as np
 import torch
 import random
+import gym
+from nle import nethack
+import minihack
+import numpy as np
 
 from dqn_helper_files.model import DQN
 from dqn_helper_files.replay_buffer import ReplayBuffer
@@ -43,8 +47,8 @@ class DQNAgent:
 
         #agent's networks
         
-        self.Q_current=DQN(observation_space, action_space).to(device)
-        self.Q_targets=DQN(observation_space, action_space).to(device)
+        self.Q_current=DQN(observation_space, action_space)
+        self.Q_targets=DQN(observation_space, action_space)
 
         # agent's optimiser
         self.optimizer=torch.optim.Adam(self.Q_current.parameters(), lr=lr)
@@ -64,11 +68,11 @@ class DQNAgent:
         states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
         states = np.array(states) 
         next_states = np.array(next_states) 
-        states = torch.from_numpy(states).float().to(device)
-        actions = torch.from_numpy(actions).long().to(device)
-        rewards = torch.from_numpy(rewards).float().to(device)
-        next_states = torch.from_numpy(next_states).float().to(device)
-        dones = torch.from_numpy(dones).float().to(device)
+        states = torch.from_numpy(states).float().to(self.Q_current.device)
+        actions = torch.from_numpy(actions).long().to(self.Q_current.device)
+        rewards = torch.from_numpy(rewards).float().to(self.Q_current.device)
+        next_states = torch.from_numpy(next_states).float().to(self.Q_current.device)
+        dones = torch.from_numpy(dones).float().to(self.Q_current.device)
 
         with torch.no_grad():
             if self.use_double_dqn:
@@ -118,7 +122,7 @@ class DQNAgent:
 
         # return action
         state = np.array(state)
-        state=torch.from_numpy(state).float().unsqueeze(0).to(device)
+        state=torch.from_numpy(state).float().unsqueeze(0).to(self.Q_current.device)
         with torch.no_grad():
             actions=self.Q_current(state)
             _, action=actions.max(1)
