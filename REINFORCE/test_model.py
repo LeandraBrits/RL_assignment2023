@@ -341,7 +341,7 @@ min_dist, dist = 0, 0
 num_steps = 20000#int(3e6)
 ep_reward = [0.0]
 
-PG_agent.policy.load_state_dict(torch.load('River-Lava_negetive_rewards_done_limit_RAdam_700k-1200k.pth'))
+PG_agent.policy.load_state_dict(torch.load('reinf_lava_WR.pth'))
 
 #from gym.wrappers.monitoring.video_recorder import VideoRecorder
 ####################################
@@ -350,58 +350,7 @@ from PIL import Image
 #import minihack
 from datetime import datetime
 
-def save_gif(gif,path):
-    '''
-    Args:
-        gif: a list of image objects
-        path: the path to save the gif to
-    '''
-    path=path+'.gif'
-    gif[0].save(path, save_all=True,optimize=False, append_images=gif[1:], loop=0)
-    print("Saved Video")
 
-def frames_to_gif(frames):
-    '''
-    Converts a list of pixel value arrays to a gif list of images
-    '''
-    gif = []
-    for image in frames:
-        gif.append(Image.fromarray(image, "RGB"))
-    return gif
-
-
-def generate_video(model,title=None,path='../videos/'):
-    '''
-    Generates a gif for a model, saves it
-    Args:
-        model - a class with a predict method that takes in a state observation and returns an action
-        title - the title of the gif 
-        the path to save the gif to
-    Ret:
-        None
-    '''
-    frames = []
-    env = gym.make('MiniHack-River-Lava-v0')
-    done = False
-    obs = env.reset()
-    while not done:
-        del obs['pixel']
-        action = model.select_action(crop, whole, stats)
-        obs, reward, done, info = env.step(action)
-        print(obs)
-        frames.append(obs["pixel"])
-        
-
-    if title is None:
-        title = datetime.now().strftime("%d-%m-%Y_%H:%M:%S") 
-
-    gif = frames_to_gif(frames)
-    save_gif(gif,path+title)
-
-####################################
-
-for i in range(0):
-        generate_video(PG_agent,title='PPO_GIFS/PPO_GIF_{}'.format(i))
 
 #video=VideoRecorder(env,path="rlvid.mp4")
 num_steps = 10
@@ -421,7 +370,7 @@ for i in range(num_steps):
     next_state,reward,done,info=env.step(action)
     #env.render()
     #print(next_state['glyphs'])
-    frames.append(next_state['glyphs'])
+    #frames.append(next_state['glyphs'])
     
     #video.capture_frame()
     ep_reward[-1]+=reward
@@ -429,8 +378,6 @@ for i in range(num_steps):
         ep_reward.append(0.0)
         state=env.reset()
 #video.close()
-gif = frames_to_gif(frames)
-save_gif(gif,'testvid')
-env.close()
+
 
 
