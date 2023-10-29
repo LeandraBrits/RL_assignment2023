@@ -2,6 +2,9 @@
 
 ## DDQN and REINFORCE for solving MiniHack the Planet environments and attempting MiniHack-Quest-Hard-v0
 
+![image](https://github.com/LeandraBrits/RL_assignment2023/assets/101238947/9e0aa07a-f632-482a-8e28-abcb358468de)
+
+
 ### Setup
 
 The installation and setup required to run the project can be found here:
