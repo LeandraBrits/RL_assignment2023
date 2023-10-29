@@ -22,6 +22,5 @@ We implement a REINFORCE algorithm combined with a custom reward manager to trai
 ### GROUP MEMBERS
 
 - Leandra Brits: 1608780
-- Zidan Cassim: 1914752
 - Rebekah van Wyk: 2344005
 - Richard Sims: 2304453
