@@ -50,10 +50,11 @@ class DQNAgent:
         self.Q_current=DQN(observation_space, action_space)
         self.Q_targets=DQN(observation_space, action_space)
 
-        # agent's optimiser
+        # agent's loss optimiser, which adjusts the neural network parameters to minimise loss 
+
         self.optimizer=torch.optim.Adam(self.Q_current.parameters(), lr=lr)
 
-        #raise NotImplementedError
+    
 
     def optimise_td_loss(self):
         """
@@ -65,6 +66,8 @@ class DQNAgent:
         #   Sample the minibatch from the replay-memory
         #   using done (as a float) instead of if statement
         #   return loss
+
+
         states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
         states = np.array(states) 
         next_states = np.array(next_states) 
@@ -95,8 +98,6 @@ class DQNAgent:
         del next_states
         return loss.item()
         
-        #return loss
-        
         raise NotImplementedError
 
     def update_target_network(self):
@@ -107,7 +108,9 @@ class DQNAgent:
 
         self.Q_targets.load_state_dict(self.Q_current.state_dict())
         
-        #raise NotImplementedError
+
+    def save(self, file_name):
+        torch.save(self.policy_network, file_name)
 
     def act(self, state: np.ndarray):
         """

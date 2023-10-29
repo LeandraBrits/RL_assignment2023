@@ -10,7 +10,7 @@ import numpy as np
 from dqn_helper_files.model import DQN
 from dqn_helper_files.replay_buffer import ReplayBuffer
 
-device = torch.device("cuda:0")
+device = torch.device("cuda")
 
 class DQNAgent:
     def __init__(
@@ -33,38 +33,39 @@ class DQNAgent:
         :param batch_size: the batch size
         :param gamma: the discount factor
         """
-        # TODO: Initialise agent's networks, optimiser and replay buffer
+        # Initialise agent's networks, optimiser and replay buffer
 
         self.action_space = action_space
         self.observation_space = observation_space
 
-        # agent's replay buffer
-        self.replay_buffer=replay_buffer
-        self.lr = lr
-        self.batch_size = batch_size
-        self.gamma = gamma
-        self.use_double_dqn=use_double_dqn    
+       
+        self.replay_buffer=replay_buffer # stores the agent's experience to learn from it repeatedly during the algorithm's run
+        self.lr = lr # learning rate
+        self.batch_size = batch_size # batch size for replay buffer sampling
+        self.gamma = gamma # discount factor
+        self.use_double_dqn=use_double_dqn # boolean for choosing regular or double dqn
 
-        #agent's networks
+        # The "current" and "target" networks
         
-        self.Q_current=DQN(observation_space, action_space)
-        self.Q_targets=DQN(observation_space, action_space)
+        self.Q_current=DQN(observation_space, action_space).to(device)
+        self.Q_targets=DQN(observation_space, action_space).to(device)
 
-        # agent's optimiser
+        # agent's optimiser, which adjusts the parameters of the neural network to minimise loss
+
         self.optimizer=torch.optim.RAdam(self.Q_current.parameters(), lr=lr)
 
-        #raise NotImplementedError
+        
+    def save(self, file_name):
+        # function to save the agent after training
+        torch.save(self.Q_current, file_name)
+
 
     def optimise_td_loss(self):
         """
         Optimise the TD-error over a single minibatch of transitions
         :return: the loss
         """
-        # TODO
-        #   Optimise the TD-error over a single minibatch of transitions
-        #   Sample the minibatch from the replay-memory
-        #   using done (as a float) instead of if statement
-        #   return loss
+
         states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
         states = np.array(states) 
         next_states = np.array(next_states) 
@@ -76,6 +77,7 @@ class DQNAgent:
 
         with torch.no_grad():
             if self.use_double_dqn:
+                # use current network to choose max action, and use target network to calculate TD target
                 _, max_next_action = self.Q_current(next_states).max(1)
                 max_next_q_values = self.Q_targets(next_states).gather(1, max_next_action.unsqueeze(1)).squeeze()
             else:
@@ -86,7 +88,11 @@ class DQNAgent:
         input_q_values = self.Q_current(states)
         input_q_values = input_q_values.gather(1, actions.unsqueeze(1)).squeeze()
 
+        #calculate loss
         loss = torch.nn.functional.smooth_l1_loss(input_q_values, target_q_values)
+
+
+        # minimise loss using optimiser
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -95,7 +101,6 @@ class DQNAgent:
         del next_states
         return loss.item()
         
-        #return loss
         
         raise NotImplementedError
 
@@ -103,11 +108,9 @@ class DQNAgent:
         """
         Update the target Q-network by copying the weights from the current Q-network
         """
-        # TODO update target_network parameters with policy_network parameters
 
         self.Q_targets.load_state_dict(self.Q_current.state_dict())
         
-        #raise NotImplementedError
 
     def act(self, state: np.ndarray):
         """
@@ -118,7 +121,7 @@ class DQNAgent:
         
         """
         
-        # TODO Select action greedily from the Q-network given the state
+        # select action greedily from the Q-network given the state
 
         # return action
         state = np.array(state)
