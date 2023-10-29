@@ -1,5 +1,7 @@
 """
-These wrappers taken from OpenAI (https://github.com/openai/baselines), and were shown to us during the DQN Lab.
+This code was provided to us for the DQN lab.
+
+Useful wrappers from OpenAI (https://github.com/openai/baselines).
 """
 
 import numpy as np

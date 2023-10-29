@@ -1,4 +1,8 @@
 import numpy as np
+"""
+This code was provided to us for the DQN lab.
+
+"""
 
 
 class ReplayBuffer:
