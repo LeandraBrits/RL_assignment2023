@@ -26,20 +26,20 @@ def reward_manager(state, last_action, action, reward, count, visited_states_map
     #  if the goal state has not been found yet, add an exploration reward proportional
     #  to the number of times that a state has been visited.
     #  Created to assist with Maze Exploration.
-    if not found:
-        beta = 0.01
-        visited_states_map[state['blstats'][1]][state['blstats'][0]] += 1
-        occurence = visited_states_map[state['blstats'][1]][state['blstats'][0]]
-        reward += beta*(1/np.sqrt(occurence))
+    # if not found:
+    #     beta = 0.01
+    #     visited_states_map[state['blstats'][1]][state['blstats'][0]] += 1
+    #     occurence = visited_states_map[state['blstats'][1]][state['blstats'][0]]
+    #     reward += beta*(1/np.sqrt(occurence))
 
 
     # Closer distance to goal reward:
     #  Give the agent a reward if the distance in current state is closer to the goal
     #  state than we have previously found.
     #  Created to assist with Maze Exploration.
-    if dist < min_dist:
-        reward+=0.01
-        min_dist = dist
+    # if dist < min_dist:
+    #     reward+=0.01
+    #     min_dist = dist
 
     # Message for successfully solidifying the lava.
     #  Created to help with the LavaCross task.
@@ -342,7 +342,7 @@ framed_states.reset(state)
 visited_states_map = np.zeros((21,79)) # a map of counts for each state
 visited_states_map[state['blstats'][1]][state['blstats'][0]] +=1
 min_dist, dist = 0, 0
-num_steps = 2000#int(3e6)
+num_steps = 200000#int(3e6)
 ep_reward = [0.0]
 ep_loss=[]
 episodes = 1
@@ -370,7 +370,7 @@ for i in range(num_steps):
     if reward > 4.9:
         found = True
     
-    reward, lava_count, min_dist, visited_states_map = reward_manager(state, last_action, action, reward, lava_count, visited_states_map, dist, min_dist, found)
+    #reward, lava_count, min_dist, visited_states_map = reward_manager(state, last_action, action, reward, lava_count, visited_states_map, dist, min_dist, found)
     last_action = action
     framed_states.step(state)
     #tb.add_scalar('reward_per_step', reward, i)
